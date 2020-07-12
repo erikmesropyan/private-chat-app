@@ -1,0 +1,14 @@
+<div class="row p-5">
+  <div class="col-4">
+    <div>
+      <ul>
+        <li *ngFor="let user of users">
+    <app-user [user]="user"></app-user>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="col-8">
+    <app-messages></app-messages>
+  </div>
+</div>
