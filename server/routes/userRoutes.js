@@ -7,5 +7,6 @@ router.post('/signup',
     userController.resizeUserPhoto,
     userController.signup);
 router.post('/login', userController.login);
-router.get('/', userController.getAllUsers)
+router.get('/',userController.protect, userController.getAllUsers);
+router.get('/history/:userId',userController.protect, userController.getMessageHistory);
 module.exports = router;

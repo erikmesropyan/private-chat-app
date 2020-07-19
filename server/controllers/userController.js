@@ -3,6 +3,7 @@ const multer = require('multer');
 const sharp = require('sharp');
 const {promisify} = require('util');
 
+const messageController = require('./messageController');
 const User = require('./../models/user');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
@@ -119,12 +120,35 @@ exports.protect = catchAsync(async (req, res, next) => {
     next();
 });
 
+exports.getCurrentUser = catchAsync(async (token) => {
+    // 2) Verification token
+    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+    // 3) Check if user still exists
+    return await User.findById(decoded.id);
+})
+
 exports.getAllUsers = catchAsync(async (req, res, next) => {
     const users = await User.find();
     res.status(200).json({
         status: 'success',
         data: {
             users
+        }
+    })
+})
+
+exports.getMessageHistory = catchAsync(async (req, res, next) => {
+    const currentUser = req.user;
+    const otherUser = await User.findById(req.params.userId);
+    if (!otherUser) {
+        next(new AppError('user not found', 404))
+    }
+    const history = await messageController.getUsersHistory(currentUser._id, otherUser._id);
+    res.status(200).json({
+        status: 'success',
+        data: {
+            history
         }
     })
 })
