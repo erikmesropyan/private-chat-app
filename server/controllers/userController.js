@@ -120,16 +120,22 @@ exports.protect = catchAsync(async (req, res, next) => {
     next();
 });
 
-exports.getCurrentUser = catchAsync(async (token) => {
+exports.getCurrentUser = async (token) => {
     // 2) Verification token
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
-    // 3) Check if user still exists
-    return await User.findById(decoded.id);
-})
+    return decoded.id;
+}
 
 exports.getAllUsers = catchAsync(async (req, res, next) => {
-    const users = await User.find();
+    const currentUser = req.user;
+    const users = await User.find({
+        _id:
+            {
+                $ne: currentUser._id
+            }
+
+    });
     res.status(200).json({
         status: 'success',
         data: {

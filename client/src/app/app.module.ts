@@ -11,6 +11,10 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 import { UserComponent } from './chat/user/user.component';
 import { MessagesComponent } from './chat/messages/messages.component';
+import {SocketIoConfig, SocketIoModule} from "ngx-socket-io";
+import {environment} from "../environments/environment";
+
+const config: SocketIoConfig = { url: environment.urlShort, options: {} };
 
 @NgModule({
   declarations: [
@@ -26,6 +30,7 @@ import { MessagesComponent } from './chat/messages/messages.component';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
+    SocketIoModule.forRoot(config),
     ReactiveFormsModule
   ],
   providers: [],

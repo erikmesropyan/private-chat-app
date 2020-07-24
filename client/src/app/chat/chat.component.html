@@ -2,13 +2,13 @@
   <div class="col-4">
     <div>
       <ul>
-        <li *ngFor="let user of users">
-    <app-user [user]="user"></app-user>
+        <li *ngFor="let user of users" (click)="startChatWith(user)">
+          <app-user [user]="user" [selectedUserId]="chatWithUser?._id"></app-user>
         </li>
       </ul>
     </div>
   </div>
   <div class="col-8">
-    <app-messages></app-messages>
+    <app-messages [currentUser]="currentUser" [messageHistory]="messageHistory" [otherUser]="chatWithUser"></app-messages>
   </div>
 </div>

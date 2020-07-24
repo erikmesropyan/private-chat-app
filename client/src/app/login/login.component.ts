@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
-import {UserService} from '../shared/user.service';
+import {UserService} from '../shared/services/user.service';
 import {Subscription} from 'rxjs';
 
 @Component({
@@ -37,8 +37,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.subscription = this.userService.login(this.loginForm.get('username').value).subscribe(() => {
       this.router.navigateByUrl('/chat')
         .catch(error => {
-        console.log(error);
-      })
+          console.log(error);
+        })
     }, error => {
       this.errorMessage = error.error.message;
     })

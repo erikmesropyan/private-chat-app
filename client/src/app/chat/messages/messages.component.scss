@@ -1,0 +1,28 @@
+ul {
+  list-style: none;
+}
+
+img {
+  cursor: pointer;
+  height: 50px;
+}
+
+.d-none {
+  display: none;
+}
+
+.b-me {
+  background-color: white;
+  color: black;
+  text-align: start;
+}
+
+.b-o {
+  background-color: rgba(146, 234, 146, 0.59);
+  color: black;
+  text-align: end;
+}
+
+.send {
+  margin-left: auto !important;
+}

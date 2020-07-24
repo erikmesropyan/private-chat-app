@@ -1,2 +1,9 @@
-<img [src]="buildImageSrc(_user?.photo)" alt="image">
-{{_user?.username}}
+<div class="card flex-row flex-wrap align-items-center my-3"
+     [ngClass]="{'bg-dark': _selectedUserId === _user._id,'text-white': _selectedUserId === _user._id }">
+  <div class="card-header border-0">
+    <img [src]="buildImageSrc(_user?.photo)" class="" alt="image">
+  </div>
+  <div class="card-block px-2">
+    <h4 class="card-title">  {{_user?.username}}</h4>
+  </div>
+</div>

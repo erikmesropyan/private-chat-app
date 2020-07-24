@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {UserModel} from '../../shared/user.model';
+import {UserModel} from '../../shared/models/user.model';
 import {environment} from '../../../environments/environment';
 
 @Component({
@@ -10,10 +10,16 @@ import {environment} from '../../../environments/environment';
 export class UserComponent implements OnInit {
 
   _user: UserModel;
+  _selectedUserId
 
   @Input()
   set user(value: UserModel) {
     this._user = value;
+  }
+
+  @Input()
+  set selectedUserId(value: string) {
+    this._selectedUserId = value;
   }
 
   constructor() { }
