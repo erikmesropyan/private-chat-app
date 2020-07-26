@@ -1,21 +1,28 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {UserModel} from "../../shared/models/user.model";
-import {ChatService} from "../../shared/services/chat.service";
+import {ChatService} from "../services/chat.service";
 import {FormControl, FormGroup} from "@angular/forms";
 import {MessageModel} from "../../shared/models/message.model";
+import {Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-messages',
   templateUrl: './messages.component.html',
   styleUrls: ['./messages.component.scss']
 })
-export class MessagesComponent implements OnInit {
-  file: File = null;
+export class MessagesComponent implements OnInit, OnDestroy {
+  private file: File = null;
   private _currentUser: UserModel;
   private _otherUser: UserModel;
-  private _messageHistory: Array<MessageModel> = [];
+  private _messageHistory: Array<MessageModel>;
+  private $destroy = new Subject<boolean>();
+
   messageForm: FormGroup;
 
+  @ViewChild('scrollableDiv', {
+    static: false
+  }) private messageContainer: ElementRef;
 
   @Input()
   set currentUser(value: UserModel) {
@@ -46,26 +53,43 @@ export class MessagesComponent implements OnInit {
   }
 
 
-  constructor(private chatService: ChatService) { }
-
-  ngOnInit(): void {
-    this.messageForm =  new FormGroup({
-      message: new FormControl('')
-    })
-
-    this.chatService.receiveMessage().subscribe(value => {
-      console.log(value);
-      this.messageHistory.push({
-        senderId: this.currentUser._id,
-        receiverId: this.otherUser._id,
-        message: value
-        }
-      );
-    })
+  constructor(private chatService: ChatService) {
   }
 
+  ngOnInit(): void {
+    this.messageForm = new FormGroup({
+      message: new FormControl('')
+    });
+    this.initHistory();
+    this.handleNewMessages();
+  }
+
+  private initHistory(): void {
+    this.chatService.getHistoryWith()
+      .pipe(takeUntil(this.$destroy))
+      .subscribe(value => {
+        this.messageHistory = value || [];
+      })
+  }
+
+  private handleNewMessages(): void {
+    this.chatService.receiveMessage()
+      .pipe(takeUntil(this.$destroy))
+      .subscribe(value => {
+        this.messageHistory.push(value);
+        this.scrollToBottom();
+      })
+  }
+
+
   public onSubmit() {
-    this.chatService.sendMessage(this.messageForm.controls.message.value);
+    this.chatService.sendMessage(
+      {
+        message: this.messageForm.controls.message.value,
+        receiverId: this.currentUser._id,
+        senderId: this.otherUser._id
+      }
+    );
   }
 
   public onChange(event: Event): void {
@@ -80,5 +104,24 @@ export class MessagesComponent implements OnInit {
     // } else {
     //   this.file = null;
     // }
+  }
+
+  private scrollToBottom(): void {
+    try {
+      setTimeout(() => {
+        this.messageContainer.nativeElement.scroll({
+          top: this.messageContainer.nativeElement.scrollHeight,
+          left: 0,
+          behavior: 'smooth'
+        })
+      }, 1)
+    } catch (err) {
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.chatService.disconnect();
+    this.$destroy.next(true);
+    this.$destroy.complete();
   }
 }

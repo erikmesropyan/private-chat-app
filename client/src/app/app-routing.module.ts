@@ -1,8 +1,7 @@
 import {NgModule} from '@angular/core';
+
 import {Routes, RouterModule} from '@angular/router';
 import {MainComponent} from './main/main.component';
-import {ChatComponent} from './chat/chat.component';
-import {UserDataResolverService} from "./shared/services/user-data-resolver.service";
 
 
 const routes: Routes = [
@@ -17,10 +16,7 @@ const routes: Routes = [
   },
   {
     path: 'chat',
-    component: ChatComponent,
-    resolve: {
-      users: UserDataResolverService
-    },
+    loadChildren: () => import('./chat/chat.module').then(m => m.ChatModule)
   }
 ];
 

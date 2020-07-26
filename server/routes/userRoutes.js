@@ -8,5 +8,5 @@ router.post('/signup',
     userController.signup);
 router.post('/login', userController.login);
 router.get('/',userController.protect, userController.getAllUsers);
-router.get('/history/:userId',userController.protect, userController.getMessageHistory);
+// router.get('/history/:userId',userController.protect, userController.getMessageHistory);
 module.exports = router;

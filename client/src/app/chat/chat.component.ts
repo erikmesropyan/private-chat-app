@@ -1,9 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {UserService} from '../shared/services/user.service';
 import {UserModel} from '../shared/models/user.model';
-import {Subscription} from "rxjs";
+import {from, Observable} from "rxjs";
 import {ActivatedRoute} from "@angular/router";
 import {MessageModel} from "../shared/models/message.model";
+import {catchError, map, take} from 'rxjs/operators';
 
 @Component({
   selector: 'app-chat',
@@ -12,8 +13,7 @@ import {MessageModel} from "../shared/models/message.model";
 })
 export class ChatComponent implements OnInit, OnDestroy {
 
-  public users: Array<UserModel> = [];
-  private subscriptions: Array<Subscription> = [];
+  public $users: Observable<Array<UserModel>> = from([]);
   public currentUser: UserModel;
   public messageHistory: Array<MessageModel>
   public chatWithUser: UserModel;
@@ -26,39 +26,32 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   private initUsers() {
-    this.subscriptions.push(this.route.data.subscribe(data => {
-      this.users = data.users;
-      if (this.users.length > 0) {
-        this.chatWithUser = this.users[0];
-        this.getMessageHistoryWith(this.chatWithUser._id);
+    this.$users = this.route.data
+      .pipe(map(data => {
+      const value = data.users;
+      if (value.length > 0) {
+        this.chatWithUser = value[0];
       }
-    }, error => {
-      console.log(error);
+      return value;
+    }), catchError(err => {
+      console.log(err);
+      return err;
     }))
   }
 
   public startChatWith(user: UserModel): void {
     this.chatWithUser = user;
-    this.getMessageHistoryWith(this.chatWithUser._id);
+    // this.getMessageHistoryWith(this.chatWithUser._id);
   }
 
   private initCurrentUser() {
-   this.subscriptions.push(this.userService.getCurrentUser().subscribe(value => {
+   this.userService.getCurrentUser()
+     .pipe(take(1))
+     .subscribe(value => {
      this.currentUser = value;
-   }))
-  }
-
-  private getMessageHistoryWith(userId: string) {
-    this.subscriptions.push(this.userService.getConversationHistoryWith(userId).subscribe(data => {
-      this.messageHistory = data || [];
-    }))
+   })
   }
 
   ngOnDestroy(): void {
-    if (this.subscriptions.length > 0) {
-      this.subscriptions.forEach(subscription => {
-        subscription.unsubscribe();
-      })
-    }
   }
 }

@@ -120,9 +120,12 @@ exports.protect = catchAsync(async (req, res, next) => {
     next();
 });
 
-exports.getCurrentUser = async (token) => {
+exports.getCurrentUserId = async (token) => {
     // 2) Verification token
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+    // check if user exists
+    await User.findById(decoded.id);
 
     return decoded.id;
 }
@@ -136,7 +139,7 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
             }
 
     });
-    res.status(200).json({
+    await res.status(200).json({
         status: 'success',
         data: {
             users
@@ -144,18 +147,31 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
     })
 })
 
-exports.getMessageHistory = catchAsync(async (req, res, next) => {
-    const currentUser = req.user;
-    const otherUser = await User.findById(req.params.userId);
-    if (!otherUser) {
-        next(new AppError('user not found', 404))
-    }
-    const history = await messageController.getUsersHistory(currentUser._id, otherUser._id);
-    res.status(200).json({
-        status: 'success',
-        data: {
-            history
-        }
-    })
-})
+// exports.getMessageHistory = catchAsync(async (req, res, next) => {
+//     const currentUser = req.user;
+//     const otherUser = await User.findById(req.params.userId);
+//     if (!otherUser) {
+//         next(new AppError('user not found', 404))
+//     }
+//     const history = await messageController.getUsersHistory(currentUser._id, otherUser._id);
+//     res.status(200).json({
+//         status: 'success',
+//         data: {
+//             history
+//         }
+//     })
+// })
+exports.getMessageHistory = async (currentUSerId, otherUserId) => {
+    const otherUser = await User.findById(otherUserId);
+    // if (!otherUser) {
+    //     next(new AppError('user not found', 404))
+    // }
+    return messageController.getUsersHistory(currentUSerId, otherUser._id);
+    // res.status(200).json({
+    //     status: 'success',
+    //     data: {
+    //         history
+    //     }
+    // })
+}
 

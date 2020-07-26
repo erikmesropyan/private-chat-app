@@ -1,7 +1,3 @@
-ul {
-  list-style: none;
-}
-
 img {
   cursor: pointer;
   height: 50px;
@@ -14,15 +10,30 @@ img {
 .b-me {
   background-color: white;
   color: black;
-  text-align: start;
+  align-self: flex-start;
 }
 
 .b-o {
   background-color: rgba(146, 234, 146, 0.59);
   color: black;
-  text-align: end;
+  align-self: flex-end;
 }
 
 .send {
   margin-left: auto !important;
+}
+
+.bottom-0 {
+  bottom: 0;
+}
+
+.sc-area {
+  overflow-y: auto;
+  max-height: 550px;
+  height: 90%;
+}
+li {
+  width: fit-content;
+  border-radius: 20px !important;
+  min-width: 30%;
 }
