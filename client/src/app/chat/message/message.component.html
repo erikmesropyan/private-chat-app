@@ -1,0 +1,8 @@
+<div class="d-flex flex-column">
+  <div [ngClass]="message.senderId === currentUser._id? 'b-me': 'b-o'">
+    {{message.message}}
+  </div>
+  <small [ngClass]="message.senderId === currentUser._id? 'b-o': 'b-me'">
+    {{message.sendDate | datePipe}}
+  </small>
+</div>
