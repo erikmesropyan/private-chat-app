@@ -18,10 +18,7 @@ const messageSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    filePath: {
-        type: String
-    },
-    fileExt: {
+    fileName: {
         type: String
     },
     sendDate: {

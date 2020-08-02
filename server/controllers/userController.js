@@ -137,8 +137,14 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
             {
                 $ne: currentUser._id
             }
-
     });
+
+    let promise = Promise.all(users.map(user =>
+        user.setNewMessagesCount(currentUser)
+    ))
+
+    await promise;
+
     await res.status(200).json({
         status: 'success',
         data: {

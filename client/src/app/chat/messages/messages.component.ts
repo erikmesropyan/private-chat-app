@@ -58,7 +58,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.messageForm = new FormGroup({
-      message: new FormControl('')
+      message: new FormControl(''),
     });
     this.initHistory();
     this.handleNewMessages();
@@ -78,32 +78,19 @@ export class MessagesComponent implements OnInit, OnDestroy {
       .subscribe(value => {
         this.messageHistory.push(value);
         this.scrollToBottom();
+        this.messageForm.reset();
+        this.file = null;
       })
   }
 
 
   public onSubmit() {
-    this.chatService.sendMessage(
-      {
-        message: this.messageForm.controls.message.value,
-        receiverId: this.currentUser._id,
-        senderId: this.otherUser._id
-      }
-    );
+    this.chatService.sendMessage(this.generateMessage());
   }
 
   public onChange(event: Event): void {
     this.file = (<HTMLInputElement>event.target).files[0];
-    this.validateFile();
-  }
-
-  private validateFile() {
-    // if (this.file.type.startsWith('image/')) {
-    //   this.imgSrc = URL.createObjectURL(this.file);
-    //   this.imgSrc = this.domSanitizer.bypassSecurityTrustResourceUrl(this.imgSrc);
-    // } else {
-    //   this.file = null;
-    // }
+    (<HTMLInputElement>event.target).value = null;
   }
 
   private scrollToBottom(): void {
@@ -119,7 +106,24 @@ export class MessagesComponent implements OnInit, OnDestroy {
     }
   }
 
+  private generateMessage(): MessageModel {
+    let message: MessageModel = {
+      receiverId: this.otherUser._id,
+      senderId: this.currentUser._id
+    }
+    if (this.messageForm.controls.message.value) {
+      message.message = this.messageForm.controls.message.value
+    }
+    if (this.file) {
+      message.fileName = this.file.name.split('.')[0] || 'file';
+      message.fileExt = this.file.type.split('/')[1];
+      message.file = this.file;
+    }
+    return message
+  }
+
   ngOnDestroy(): void {
+    this.chatService.removeAllListeners();
     this.chatService.disconnect();
     this.$destroy.next(true);
     this.$destroy.complete();

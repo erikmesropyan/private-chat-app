@@ -2,31 +2,33 @@ import {Injectable} from '@angular/core';
 import {Socket} from "ngx-socket-io";
 import {Observable} from "rxjs";
 import {MessageModel} from "../../shared/models/message.model";
+import {CONFIG} from '../utils/socket.config';
 
 @Injectable()
-export class ChatService {
+export class ChatService extends Socket {
 
-  constructor(private socket: Socket) {
+  constructor() {
+    super(CONFIG);
   }
 
   public connectToRoomWith(otherUserId: string): void {
-    this.socket.emit('joinRoom', otherUserId);
+    this.emit('joinRoom', otherUserId);
   }
 
   public getHistoryWith(): Observable<Array<MessageModel>> {
-    return this.socket.fromEvent('history');
+    return this.fromEvent('history');
   }
 
-  public disconnect(): void {
-    this.socket.removeAllListeners();
-    this.socket.disconnect();
-  }
+  // public disconnect(): void {
+  //   this.removeAllListeners();
+  //   this.disconnect();
+  // }
 
   public sendMessage(message: MessageModel) {
-    this.socket.emit('send message', message);
+    this.emit('send message', message);
   }
 
   public receiveMessage(): Observable<MessageModel> {
-    return this.socket.fromEvent('getMessage');
+    return this.fromEvent('getMessage');
   }
 }

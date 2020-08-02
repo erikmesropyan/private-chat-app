@@ -1,8 +1,38 @@
-<div class="d-flex flex-column">
-  <div [ngClass]="message.senderId === currentUser._id? 'b-me': 'b-o'">
-    {{message.message}}
-  </div>
-  <small [ngClass]="message.senderId === currentUser._id? 'b-o': 'b-me'">
-    {{message.sendDate | datePipe}}
-  </small>
+<div class="d-flex">
+  <ng-container *ngIf="message.senderId === currentUser._id; else other">
+    <ng-container *ngIf="message.hasFile">
+      <img src="/assets/download-button.png" alt="download" class="download_icon order-3 align-self-center"
+           data-toggle="tooltip"
+           data-placement="bottom" title="download" (click)="downloadFile()">
+    </ng-container>
+    <div class="mx-3 b-me order-2 align-self-center">
+      {{message.message}}
+    </div>
+    <div class="b-o order-1 mr-auto message_block">
+      <small class="order-2">
+        {{message.sendDate | datePipe}}
+      </small>
+      <img
+        [src]="buildImageSrc(currentUser?.photo)"
+        class="order-1" alt="user photo">
+    </div>
+  </ng-container>
+  <ng-template #other>
+    <ng-container *ngIf="message.hasFile">
+      <img src="/assets/download-button.png" alt="download" class="download_icon align-self-center"
+           data-toggle="tooltip"
+           data-placement="bottom" title="download" (click)="downloadFile()">
+    </ng-container>
+    <div class="mx-3 b-o order-1 align-self-center">
+      {{message.message}}
+    </div>
+    <div class="b-me order-2 ml-auto message_block">
+      <small class="order-1">
+        {{message.sendDate | datePipe}}
+      </small>
+      <img
+        [src]="buildImageSrc(otherUser?.photo)"
+        class="order-2" alt="user photo">
+    </div>
+  </ng-template>
 </div>

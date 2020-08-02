@@ -14,3 +14,15 @@ export const CONFIG: SocketIoConfig = {
     }
   }
 };
+
+export const CONFIG_FOR_USER: SocketIoConfig = {
+  url: environment.urlShort + 'user', options: {
+    transportOptions: {
+      polling: {
+        extraHeaders: {
+          'Authorization': 'Bearer ' + token
+        }
+      }
+    }
+  }
+};

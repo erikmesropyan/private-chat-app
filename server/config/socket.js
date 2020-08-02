@@ -1,3 +1,6 @@
+const fs = require('fs');
+const path = require('path');
+
 const userController = require('../controllers/userController');
 
 module.exports = (app) => {
@@ -5,13 +8,15 @@ module.exports = (app) => {
         handlePreflightRequest: handleCors
     });
     io.use(authenticate);
+    const user_ns = io.of('/user')
     io.on('connection', socket => {
-        socket.on('joinRoom', joinToRoom.bind(null, socket))
-        socket.on('send message', sendMessage.bind(null, io, socket))
+        socket.on('joinRoom', joinToRoom.bind(null, socket));
+        socket.on('send message', sendMessage.bind(null, io, socket, user_ns));
+
     })
 }
 
-const handleCors = (req, res, next) => {
+const handleCors = (req, res) => {
     const headers = {
         "Access-Control-Allow-Headers": "Content-Type, Authorization",
         "Access-Control-Allow-Origin": req.headers.origin, //or the specific origin you want to give access to,
@@ -33,8 +38,10 @@ const joinToRoom = async (socket, otherUserId) => {
     socket.emit('history', await userController.getMessageHistory(userId, otherUserId));
 }
 
-const sendMessage = (io, socket, message) => {
+const sendMessage = async (io, socket, user_ns, message) => {
+    await processMessage(message);
     io.to(Object.keys(socket.rooms)[0]).emit('getMessage', message);
+    user_ns.emit('notification' + message.receiverId, message);
 }
 
 const authenticate = async (socket, next) => {
@@ -45,4 +52,25 @@ const authenticate = async (socket, next) => {
         return next();
     }
     return next(new Error('authentication error'));
+}
+
+const processMessage = (message) => {
+    return new Promise((resolve, reject) => {
+        message.sendDate = new Date();
+        if (message.file) {
+            message.hasFile = true;
+            const fileName = message.fileName + message.senderId + message.receiverId + new Date().getTime() + '.' + message.fileExt;
+            const filePath = path.join(__dirname, '..', 'public', 'messages', fileName)
+            fs.writeFile(filePath, message.file, function (err) {
+                if (err) {
+                    reject(err);
+                }
+                message.file = message.fileExt = undefined;
+                message.fileName = fileName;
+                resolve();
+            });
+        } else {
+            resolve();
+        }
+    })
 }

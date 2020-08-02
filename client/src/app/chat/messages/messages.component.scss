@@ -14,7 +14,7 @@ img {
 }
 
 .b-o {
-  background-color: rgba(146, 234, 146, 0.59);
+  background-color: rgb(237, 251, 220);
   color: black;
   align-self: flex-end;
 }
@@ -35,5 +35,6 @@ img {
 li {
   width: fit-content;
   border-radius: 20px !important;
-  min-width: 30%;
+  min-width: 50%;
+  border-top-width: 1px !important;
 }

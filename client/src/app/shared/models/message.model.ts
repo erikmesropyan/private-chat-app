@@ -3,8 +3,9 @@ export interface MessageModel {
   receiverId: string,
   message?: string,
   hasFile?: boolean,
-  filePath?: boolean,
   fileExt?: string,
+  fileName?: string,
+  file?: any,
   sendDate?: Date,
   readed?: boolean
 }

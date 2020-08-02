@@ -12,11 +12,11 @@
       <form class="form-inline" [formGroup]="messageForm" (ngSubmit)="onSubmit()">
         <div class="col-1">
           <img src="/assets/icon-add-file.png" alt="icon" (click)="inputElement.click()">
-          <input type="file" (change)="onChange($event)" formControlName="message" id="fileInput" class="d-none" #inputElement>
+          <input type="file" (change)="onChange($event)" id="fileInput" class="d-none" #inputElement>
         </div>
         <label class="sr-only" for="inlineFormInputGroupUsername2">Message</label>
         <input type="text" class="form-control col-7" id="inlineFormInputGroupUsername2" formControlName="message"
-               placeholder="write a message...">
+               placeholder="write a message..." autocomplete="off">
         <button type="submit" class="btn btn-primary col-3 ml-1 send">Send</button>
       </form>
     </div>

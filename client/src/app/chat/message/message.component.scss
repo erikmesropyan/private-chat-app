@@ -1,7 +1,32 @@
 .b-me {
-text-align: end;
+  margin-left: auto;
+  word-break: break-all;
+  white-space: normal;
 }
 
 .b-o {
-text-align: start;
+  margin-right: auto;
+  word-break: break-all;
+  white-space: normal;
+}
+
+.download_icon {
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+}
+
+.message_block {
+  display: flex;
+  align-items: flex-end;
+  white-space: nowrap;
+
+  img {
+    border-radius: 50%;
+    max-height: 75px;
+  }
+}
+
+.tooltip.bs-tooltip-bottom .arrow:before {
+  border-right-color: gray !important;
 }
