@@ -1,0 +1,24 @@
+version: "3"
+services:
+  mongo:
+    container_name: mongo
+    image: mongo
+    network_mode: host
+    ports:
+      - "27018:27017"
+  node_app:
+    container_name: node-chat-app
+    restart: always
+    build: ./server
+    network_mode: host
+    ports:
+      - "3000:8000"
+    depends_on:
+      - mongo
+  angular_app:
+    container_name: angular_chat_app
+    restart: always
+    network_mode: host
+    build: ./client
+    ports:
+    - "4200:4200"
