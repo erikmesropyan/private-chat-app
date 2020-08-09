@@ -1,9 +1,9 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {UserService} from '../shared/services/user.service';
 import {UserModel} from '../shared/models/user.model';
-import {from, Observable} from "rxjs";
-import {ActivatedRoute} from "@angular/router";
-import {MessageModel} from "../shared/models/message.model";
+import {from, Observable} from 'rxjs';
+import {ActivatedRoute} from '@angular/router';
+import {MessageModel} from '../shared/models/message.model';
 import {catchError, map, take} from 'rxjs/operators';
 
 @Component({
@@ -15,7 +15,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   public $users: Observable<Array<UserModel>> = from([]);
   public currentUser: UserModel;
-  public messageHistory: Array<MessageModel>
+  public messageHistory: Array<MessageModel>;
   public chatWithUser: UserModel;
 
   constructor(private userService: UserService, private route: ActivatedRoute) { }
@@ -36,7 +36,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     }), catchError(err => {
       console.log(err);
       return err;
-    }))
+    }));
   }
 
   public startChatWith(user: UserModel): void {
@@ -49,7 +49,7 @@ export class ChatComponent implements OnInit, OnDestroy {
      .pipe(take(1))
      .subscribe(value => {
      this.currentUser = value;
-   })
+   });
   }
 
   ngOnDestroy(): void {

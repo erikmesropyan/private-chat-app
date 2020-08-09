@@ -11,10 +11,15 @@
     "no-process-exit": "off",
     "no-param-reassign": "off",
     "no-return-await": "off",
+    "camelcase": "off",
+    "no-multi-assign": "off",
+    "no-prototype-builtins": "off",
+    "global-require": "off",
+    "no-use-before-define": "off",
     "no-underscore-dangle": "off",
     "class-methods-use-this": "off",
     "prefer-destructuring": ["error", { "object": true, "array": false }],
-    "max-len": ["error", { "code": 80 }],
+    "max-len": ["error", { "code": 140 }],
     "no-unused-vars": ["error", { "argsIgnorePattern": "req|res|next|val" }]
   }
 }

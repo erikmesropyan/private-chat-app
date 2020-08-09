@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {Socket} from "ngx-socket-io";
-import {Observable} from "rxjs";
-import {MessageModel} from "../../shared/models/message.model";
+import {Socket} from 'ngx-socket-io';
+import {Observable} from 'rxjs';
+import {MessageModel} from '../../shared/models/message.model';
 import {CONFIG} from '../utils/socket.config';
 
 @Injectable()
@@ -30,5 +30,9 @@ export class ChatService extends Socket {
 
   public receiveMessage(): Observable<MessageModel> {
     return this.fromEvent('getMessage');
+  }
+
+  readMessagesWith(otherUserId: string) {
+    this.emit('readAllMessagesWith', otherUserId);
   }
 }

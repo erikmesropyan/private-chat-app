@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {UserService} from "./shared/services/user.service";
+import {UserService} from './shared/services/user.service';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +16,7 @@ export class AppComponent implements OnInit {
     if (user) {
       this.userService.setCurrentUser(JSON.parse(user));
     }
-    const token = localStorage.getItem(UserService.TOKEN_KEY)
+    const token = localStorage.getItem(UserService.TOKEN_KEY);
     if (token) {
       this.userService.setToken(token);
     }

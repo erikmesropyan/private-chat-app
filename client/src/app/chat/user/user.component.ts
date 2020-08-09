@@ -4,6 +4,7 @@ import {environment} from '../../../environments/environment';
 import {UserSocketService} from '../services/userSocket.service';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
+import {ChatService} from '../services/chat.service';
 
 @Component({
   selector: 'app-user',
@@ -30,7 +31,8 @@ export class UserComponent implements OnInit, OnDestroy {
     }
   }
 
-  constructor(private userSocketService: UserSocketService) {
+  constructor(private userSocketService: UserSocketService,
+              private chatService: ChatService) {
   }
 
   ngOnInit(): void {
@@ -43,11 +45,14 @@ export class UserComponent implements OnInit, OnDestroy {
 
   onNewMessages() {
     this.userSocketService.newMessage().pipe(takeUntil(this.$destroy)).subscribe(message => {
-      if (this._user._id === message.senderId
-        && this._selectedUserId !== message.senderId) {
-        this._user.newMessagesCount++;
+      if (this._user._id === message.senderId) {
+        if (this._selectedUserId !== message.senderId) {
+          this._user.newMessagesCount++;
+        } else {
+          this.chatService.readMessagesWith(this._user._id);
       }
-    })
+    }
+    });
   }
 
   ngOnDestroy(): void {

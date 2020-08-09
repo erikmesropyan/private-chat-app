@@ -1,6 +1,6 @@
 <div class="row p-5">
   <div class="col-4">
-    <div>
+    <div class="users_container">
       <ul>
         <li *ngFor="let user of $users | async" (click)="startChatWith(user)" class="cursor-pointer">
           <app-user [user]="user" [selectedUserId]="chatWithUser?._id"></app-user>

@@ -1,8 +1,8 @@
 import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {UserModel} from "../../shared/models/user.model";
-import {ChatService} from "../services/chat.service";
-import {FormControl, FormGroup} from "@angular/forms";
-import {MessageModel} from "../../shared/models/message.model";
+import {UserModel} from '../../shared/models/user.model';
+import {ChatService} from '../services/chat.service';
+import {FormControl, FormGroup} from '@angular/forms';
+import {MessageModel} from '../../shared/models/message.model';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 
@@ -69,7 +69,11 @@ export class MessagesComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.$destroy))
       .subscribe(value => {
         this.messageHistory = value || [];
-      })
+        this.scrollToBottom();
+        if (this.messageHistory.some(message => !message.readed)) {
+          this.chatService.readMessagesWith(this._otherUser._id);
+        }
+      });
   }
 
   private handleNewMessages(): void {
@@ -80,7 +84,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
         this.scrollToBottom();
         this.messageForm.reset();
         this.file = null;
-      })
+      });
   }
 
 
@@ -89,8 +93,8 @@ export class MessagesComponent implements OnInit, OnDestroy {
   }
 
   public onChange(event: Event): void {
-    this.file = (<HTMLInputElement>event.target).files[0];
-    (<HTMLInputElement>event.target).value = null;
+    this.file = (event.target as HTMLInputElement).files[0];
+    (event.target as HTMLInputElement).value = null;
   }
 
   private scrollToBottom(): void {
@@ -100,26 +104,26 @@ export class MessagesComponent implements OnInit, OnDestroy {
           top: this.messageContainer.nativeElement.scrollHeight,
           left: 0,
           behavior: 'smooth'
-        })
-      }, 1)
+        });
+      }, 1);
     } catch (err) {
     }
   }
 
   private generateMessage(): MessageModel {
-    let message: MessageModel = {
+    const message: MessageModel = {
       receiverId: this.otherUser._id,
       senderId: this.currentUser._id
-    }
+    };
     if (this.messageForm.controls.message.value) {
-      message.message = this.messageForm.controls.message.value
+      message.message = this.messageForm.controls.message.value;
     }
     if (this.file) {
       message.fileName = this.file.name.split('.')[0] || 'file';
       message.fileExt = this.file.type.split('/')[1];
       message.file = this.file;
     }
-    return message
+    return message;
   }
 
   ngOnDestroy(): void {

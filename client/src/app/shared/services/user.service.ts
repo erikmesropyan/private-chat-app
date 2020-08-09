@@ -5,15 +5,15 @@ import {UserModel} from '../models/user.model';
 import {environment} from '../../../environments/environment';
 import {exhaustMap, map, take, tap} from 'rxjs/operators';
 import {ResponseModel, Statuses} from '../models/response.model';
-import {MessageModel} from "../models/message.model";
+import {MessageModel} from '../models/message.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
 
-  public static readonly TOKEN_KEY = 'access_token'
-  public static readonly USER_KEY = 'user'
+  public static readonly TOKEN_KEY = 'access_token';
+  public static readonly USER_KEY = 'user';
 
   private currentUserSubject: BehaviorSubject<UserModel> = new BehaviorSubject<UserModel>(null);
   private tokenSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
@@ -21,25 +21,16 @@ export class UserService {
   constructor(private http: HttpClient) {
   }
 
-  public login(username: String): Observable<ResponseModel> {
+  public login(username: string): Observable<ResponseModel> {
     return this.http.post<ResponseModel>(environment.url + 'users/login', {username})
-      .pipe(tap(value => {
-        if (value.status === Statuses.success) {
-          localStorage.setItem(UserService.TOKEN_KEY, value.token);
-          sessionStorage.setItem(UserService.USER_KEY, JSON.stringify(value.data.user));
-          this.setToken(value.token);
-          this.setCurrentUser(value.data.user);
-        } else {
-          throw new Error(value.message);
-        }
-      }))
+      .pipe(tap(this.handleLogin.bind(this)));
   }
 
   setCurrentUser(currentUser: UserModel) {
     if (!this.currentUserSubject) {
       this.currentUserSubject = new BehaviorSubject<UserModel>(currentUser);
     } else {
-      this.currentUserSubject.next(currentUser)
+      this.currentUserSubject.next(currentUser);
     }
   }
 
@@ -47,7 +38,7 @@ export class UserService {
     if (!this.tokenSubject) {
       this.tokenSubject = new BehaviorSubject<string>(token);
     } else {
-      this.tokenSubject.next(token)
+      this.tokenSubject.next(token);
     }
   }
 
@@ -79,10 +70,10 @@ export class UserService {
   private handleMap(returnFieldName: string) {
     return value => {
       if (value.status === Statuses.success) {
-        return value.data[returnFieldName]
+        return value.data[returnFieldName];
       }
-      throw new Error(value.message)
-    }
+      throw new Error(value.message);
+    };
   }
 
   private handleTokenCreation(url: string) {
@@ -91,7 +82,22 @@ export class UserService {
         headers: {
           Authorization: 'Bearer ' + token
         }
-      })
+      });
+    };
+  }
+
+  private handleLogin(value: ResponseModel) {
+    if (value.status === Statuses.success) {
+      localStorage.setItem(UserService.TOKEN_KEY, value.token);
+      sessionStorage.setItem(UserService.USER_KEY, JSON.stringify(value.data.user));
+      this.setToken(value.token);
+      this.setCurrentUser(value.data.user);
+    } else {
+      throw new Error(value.message);
     }
+  }
+
+  public register(data: FormData): Observable<ResponseModel> {
+    return this.http.post<ResponseModel>(environment.url + 'users/signup', data).pipe(tap(this.handleLogin.bind(this)));
   }
 }

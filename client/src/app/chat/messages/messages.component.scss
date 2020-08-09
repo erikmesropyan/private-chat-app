@@ -31,10 +31,15 @@ img {
   overflow-y: auto;
   max-height: 550px;
   height: 90%;
+  background-size: cover;
+  background-position: center;
+  background-image: url("/assets/background.jpg");
+  //background-attachment: fixed;
 }
 li {
   width: fit-content;
   border-radius: 20px !important;
   min-width: 50%;
+  opacity: 0.9;
   border-top-width: 1px !important;
 }

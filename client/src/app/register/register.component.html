@@ -1,7 +1,7 @@
 <div class="mt-5 px-5">
-<!--      <div class="alert alert-danger" role="alert">-->
-<!--        This is a danger alert—check it out!-->
-<!--      </div>-->
+      <div *ngIf="errorMsg" class="alert alert-danger" role="alert">
+       {{errorMsg}}
+      </div>
   <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
   <div *ngIf="file && imgSrc" class="mb-3">
     <img class="img-thumbnail rounded mx-auto img-fluid"
